@@ -2,7 +2,7 @@
   "name": "ref-napi",
   "description": "Turn Buffer instances into \"pointers\"",
   "engines": {
-    "node": ">= 10.0"
+    "node": ">= 20.0"
   },
   "keywords": [
     "native",
@@ -32,15 +32,16 @@
   "scripts": {
     "docs": "node docs/compile",
     "test": "nyc mocha --expose-gc",
+    "build": "node-gyp rebuild",
     "install": "node-gyp-build",
-    "prebuild": "prebuildify --napi --tag-armv",
+    "prebuild": "prebuildify --napi --tag-armv --tag-uv --strip",
     "prepack": "prebuildify-ci download && ([ $(ls prebuilds | wc -l) = '5' ] || (echo 'Some prebuilds are missing'; exit 1))"
   },
   "dependencies": {
-    "debug": "^4.1.1",
-    "get-symbol-from-current-process-h": "^1.0.2",
-    "node-addon-api": "^3.0.0",
-    "node-gyp-build": "^4.2.1"
+    "debug": "^4.3.7",
+    "@napi-ffi/get-symbol-from-current-process-h": "^1.0.4",
+    "node-addon-api": "^8.2.1",
+    "node-gyp-build": "^4.8.2"
   },
   "devDependencies": {
     "dox": "0.9.0",
@@ -48,8 +49,8 @@
     "jade": "^1.11.0",
     "marked": "^1.0.0",
     "mocha": "^7.1.1",
-    "nyc": "^15.0.0",
-    "prebuildify": "^3.0.4",
+    "nyc": "^17.1.0",
+    "prebuildify": "^6.0.1",
     "prebuildify-ci": "^1.0.5",
     "weak-napi": "^2.0.0"
   }
