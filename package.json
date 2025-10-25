@@ -1,5 +1,5 @@
 {
-  "name": "ref-napi",
+  "name": "@napi-ffi/ref-napi",
   "description": "Turn Buffer instances into \"pointers\"",
   "engines": {
     "node": ">= 20.0"
@@ -21,12 +21,15 @@
     "64",
     "napi"
   ],
-  "version": "3.0.3",
+  "version": "3.0.4",
   "license": "MIT",
   "author": "Anna Henningsen <anna@addaleax.net>",
+  "maintainers": [
+    "Gilson Urbano <hello@gilsonurbano.com>"
+  ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/node-ffi-napi/ref-napi.git"
+    "url": "git://github.com/napi-ffi/ref-napi.git"
   },
   "main": "./lib/ref.js",
   "scripts": {

@@ -1,14 +1,12 @@
-ref-napi
-========
+@napi-ffi/ref-napi
+==================
 ### Turn Buffer instances into "pointers"
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/node-ffi-napi/ref-napi.svg)](https://greenkeeper.io/)
+[![CI](https://github.com/napi-ffi/ref-napi/actions/workflows/ci.yml/badge.svg)](https://github.com/napi-ffi/ref-napi/actions/workflows/ci.yml)
+[![NPM Version](https://img.shields.io/npm/v/@napi-ffi/ref-napi.svg?style=flat)](https://npmjs.org/package/@napi-ffi/ref-napi)
+[![NPM Downloads](https://img.shields.io/npm/dm/@napi-ffi/ref-napi.svg?style=flat)](https://npmjs.org/package/@napi-ffi/ref-napi)
 
-[![NPM Version](https://img.shields.io/npm/v/ref-napi.svg?style=flat)](https://npmjs.org/package/ref-napi)
-[![NPM Downloads](https://img.shields.io/npm/dm/ref-napi.svg?style=flat)](https://npmjs.org/package/ref-napi)
-[![Build Status](https://travis-ci.org/node-ffi-napi/ref-napi.svg?style=flat&branch=latest)](https://travis-ci.org/node-ffi-napi/ref-napi?branch=latest)
-[![Coverage Status](https://coveralls.io/repos/node-ffi-napi/ref-napi/badge.svg?branch=latest)](https://coveralls.io/r/node-ffi-napi/ref-napi?branch=latest)
-[![Dependency Status](https://david-dm.org/node-ffi-napi/ref-napi.svg?style=flat)](https://david-dm.org/node-ffi-napi/ref-napi)
+> Forked from [node-ffi-napi/ref-napi](https://github.com/node-ffi-napi/ref-napi) to maintain and modernize the project while preserving the original APIs.
 
 This module is inspired by the old `Pointer` class from node-ffi, but with the
 intent of using Node's fast `Buffer` instances instead of a slow C++ `Pointer`
@@ -33,7 +31,7 @@ Installation
 Install with `npm`:
 
 ``` bash
-$ npm install ref-napi
+$ npm install @napi-ffi/ref-napi
 ```
 
 
@@ -149,8 +147,8 @@ have names that sound like they are compatible with this module.
 
 They are not, and your application will experience crashes if you use
 them together with `ref-napi`. 
-Use [`ref-struct-di`](https://www.npmjs.com/package/ref-struct-di)
-or [`ref-array-di`](https://www.npmjs.com/package/ref-array-di) instead.
+Use [`ref-struct-di`](https://www.npmjs.com/package/@napi-ffi/ref-struct-di)
+or [`ref-array-di`](https://www.npmjs.com/package/@napi-ffi/ref-array-di) instead.
 
 License
 -------
@@ -159,6 +157,7 @@ License
 
 Copyright (c) 2012 Nathan Rajlich &lt;nathan@tootallnate.net&gt;
 Copyright (c) 2017 Anna Henningsen &lt;anna@addaleax.net&gt; (N-API port)
+Copyright (c) 2025 napi-ffi organization
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
