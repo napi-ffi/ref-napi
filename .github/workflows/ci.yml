@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Test on ${{ matrix.os }} with Node.js ${{ matrix.node-version }} / ${{ matrix.arch }}
+    name: Test on ${{ matrix.os }} with Node.js ${{ matrix.node-version }}
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -21,11 +21,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }} (${{ matrix.arch }})
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          architecture: ${{ matrix.arch }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -33,11 +32,16 @@ jobs:
 
       - name: Build native tests
         run: npm run build
-        env:
-          npm_config_arch: ${{ matrix.arch }}
 
       - name: Run native tests
         run: npm run test
 
-      - name: Display architecture info
-        run: node -e "console.log('Node arch:', process.arch); console.log('Platform:', process.platform)"
+      - name: Prebuild
+        shell: bash
+        run: npm run prebuild
+
+      - name: Upload prebuilds
+        uses: actions/upload-artifact@v4
+        with:
+          name: ref-napi-prebuild-${{ matrix.os }}-${{ matrix.node-version }}
+          path: prebuilds/
