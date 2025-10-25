@@ -39,9 +39,3 @@ jobs:
       - name: Prebuild
         shell: bash
         run: npm run prebuild
-
-      - name: Upload prebuilds
-        uses: actions/upload-artifact@v4
-        with:
-          name: ref-napi-prebuild-${{ matrix.os }}-${{ matrix.node-version }}
-          path: prebuilds/
