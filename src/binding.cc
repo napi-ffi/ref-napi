@@ -2,6 +2,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unordered_map>
+#include <assert.h>
 
 #include "ref-napi.h"
 

@@ -4,7 +4,7 @@
     'sources': [ 'src/binding.cc' ],
     'include_dirs': [
       "<!@(node -p \"require('node-addon-api').include\")",
-      "<!@(node -p \"require('get-symbol-from-current-process-h').include\")",
+      "<!@(node -p \"require('@napi-ffi/get-symbol-from-current-process-h').include\")",
       "<!@(node -p \"require('./lib/get-paths').include\")",
     ],
     'dependencies': [
