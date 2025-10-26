@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('assert');
 const ref = require('../');
-let weak; try { weak = require('weak-napi'); } catch (e) {}
+const weak = require('@napi-ffi/weak-napi');
 
 describe('pointer', function() {
   const test = Buffer.from('hello world');
