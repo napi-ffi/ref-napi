@@ -169,6 +169,7 @@ class InstanceData final : public RefNapi::Instance {
  */
 
 Value WrapPointer(Env env, char* ptr, size_t length) {
+  bool pointer_only = false;
   if (ptr == nullptr) {
     length = 0;
   } else if (length == 0) {
@@ -177,18 +178,32 @@ Value WrapPointer(Env env, char* ptr, size_t length) {
     // "[out] data: ... If the length of the array is 0, this may be NULL or any
     // other pointer value."
     length = 1;
+    pointer_only = true;
   }
 
+  Value result;
   InstanceData* data;
   if (ptr != nullptr && (data = InstanceData::Get(env)) != nullptr) {
     ArrayBuffer ab = data->LookupOrCreateArrayBuffer(ptr, length);
     assert(!ab.IsEmpty());
-    return data->buffer_from.Call({
+    result = data->buffer_from.Call({
       ab, Number::New(env, 0), Number::New(env, length)
     });
+  } else {
+    result = Buffer<char>::New(env, ptr, length, [](Env,char*){});
   }
 
-  return Buffer<char>::New(env, ptr, length, [](Env,char*){});
+  // Mark synthetic 1-byte buffers as pointer-only so refinspect knows not to
+  // read the backing byte (which may be at an inaccessible sentinel address
+  // like RTLD_NEXT = (void*)-1 = 0xffffffffffffffff).
+  if (pointer_only) {
+    result.As<Object>().Set(
+      Symbol::For(env, "nodejs.ref-napi.pointer_only"),
+      Boolean::New(env, true)
+    );
+  }
+
+  return result;
 }
 
 char* GetBufferData(Value val) {
