@@ -41,11 +41,11 @@ Examples
 #### referencing and derefencing
 
 ``` js
-var ref = require('ref-napi')
+var ref = require('@napi-ffi/ref-napi')
 
 // so we can all agree that a buffer with the int value written
 // to it could be represented as an "int *"
-var buf = new Buffer(4)
+var buf = Buffer.alloc(4)
 buf.writeInt32LE(12345, 0)
 
 // first, what is the memory address of the buffer?
@@ -93,7 +93,7 @@ For example, you could define a "bigint" type that dereferences into a
 [`bigint`](https://github.com/substack/node-bigint) instance:
 
 ``` js
-var ref = require('ref-napi')
+var ref = require('@napi-ffi/ref-napi')
 var bigint = require('bigint')
 
 // define the "type" instance according to the spec
