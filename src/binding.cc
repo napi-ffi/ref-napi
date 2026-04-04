@@ -106,12 +106,12 @@ class InstanceData final : public RefNapi::Instance {
 
     auto it = pointer_to_orig_buffer.find(ptr);
     if (it != pointer_to_orig_buffer.end()) {
+      it->second.finalizer_count++;
       if (!it->second.ab.Value().IsEmpty()) {
         // Already have a valid entry, nothing to do.
         return;
       }
       it->second.ab.Reset(buf, 0);
-      it->second.finalizer_count++;
     } else {
       pointer_to_orig_buffer.emplace(ptr, ArrayBufferEntry {
         Reference<ArrayBuffer>::New(buf, 0),
