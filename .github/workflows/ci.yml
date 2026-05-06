@@ -49,5 +49,4 @@ jobs:
         run: npm run test
 
       - name: Prebuild
-        shell: bash
         run: npm run prebuild

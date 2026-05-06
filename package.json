@@ -37,7 +37,7 @@
     "test": "nyc mocha --expose-gc",
     "build": "node-gyp rebuild",
     "install": "node-gyp-build",
-    "prebuild": "prebuildify --napi --tag-armv --tag-uv --strip",
+    "prebuild": "node scripts/prebuild.js",
     "prepack": "([ $(ls prebuilds | wc -l) > '0' ] || (echo 'Some prebuilds are missing'; exit 1))"
   },
   "dependencies": {
