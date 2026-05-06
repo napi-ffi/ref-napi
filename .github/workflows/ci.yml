@@ -27,9 +27,6 @@ jobs:
           - os: windows-latest
             node-version: 22.x
             arch: x86
-          - os: windows-latest
-            node-version: 24.x
-            arch: x86
 
     steps:
       - name: Checkout code
