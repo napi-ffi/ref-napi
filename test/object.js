@@ -63,6 +63,28 @@ describe('Object', function() {
     });
   });
 
+  it('should throw an Error when reading an Object from uninitialized memory', function() {
+    // https://github.com/napi-ffi/ref-napi/issues/5
+    const buf = Buffer.alloc(64, 1);
+    assert.throws(() => {
+      ref.readObject(buf, 0);
+    });
+  });
+
+  it('should throw an Error when reading an Object from a never-written zero-filled Buffer', function() {
+    const buf = Buffer.alloc(ref.sizeof.Object);
+    assert.throws(() => {
+      ref.readObject(buf, 0);
+    });
+  });
+
+  it('should write and read back an Object in a Buffer whose memory was previously garbage', function() {
+    const buf = Buffer.alloc(ref.sizeof.Object, 1);
+    ref.writeObject(buf, 0, obj);
+    const out = ref.readObject(buf, 0);
+    assert.strictEqual(obj, out);
+  });
+
   describe('offset', function() {
     it('should read two Objects next to each other in memory', function() {
       const buf = Buffer.alloc(ref.sizeof.Object * 2);

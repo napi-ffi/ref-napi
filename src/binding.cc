@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <unordered_map>
 #include <assert.h>
+#include <new>
 
 #include "ref-napi.h"
 
@@ -288,6 +289,19 @@ Value IsNull(const CallbackInfo& args) {
 }
 
 /**
+ * The in-memory layout used to store a weak reference to a JS Object inside
+ * a raw Buffer. `magic` tags whether this memory has ever been initialized
+ * by WriteObject, so ReadObject/WriteObject never reinterpret arbitrary
+ * (uninitialized or otherwise unrelated) Buffer bytes as a live
+ * Napi::Reference, which previously caused segfaults (see GH #5).
+ */
+struct ObjectSlot {
+  uint32_t magic;
+  Reference<Object> ref;
+};
+static constexpr uint32_t kObjectMagic = 0x724e4f62;
+
+/**
  * Retreives a JS Object instance that was previously stored in
  * the given Buffer instance at the given offset.
  *
@@ -302,8 +316,11 @@ Value ReadObject(const CallbackInfo& args) {
     throw Error::New(args.Env(), "readObject: Cannot read from nullptr pointer");
   }
 
-  Reference<Object>* rptr = reinterpret_cast<Reference<Object>*>(ptr);
-  return rptr->Value();
+  ObjectSlot* slot = reinterpret_cast<ObjectSlot*>(ptr);
+  if (slot->magic != kObjectMagic) {
+    throw Error::New(args.Env(), "readObject: Cannot read Object from uninitialized memory");
+  }
+  return slot->ref.Value();
 }
 
 /**
@@ -324,12 +341,20 @@ void WriteObject(const CallbackInfo& args) {
     throw Error::New(env, "readObject: Cannot write to nullptr pointer");
   }
 
-  Reference<Object>* rptr = reinterpret_cast<Reference<Object>*>(ptr);
+  ObjectSlot* slot = reinterpret_cast<ObjectSlot*>(ptr);
+  if (slot->magic != kObjectMagic) {
+    // This memory has never been initialized by WriteObject, so its bytes
+    // cannot be trusted to represent a valid Reference<Object>. Construct a
+    // fresh, empty one in place rather than interpreting the stale bytes.
+    new (&slot->ref) Reference<Object>();
+    slot->magic = kObjectMagic;
+  }
+
   if (args[2].IsObject()) {
     Object val = args[2].As<Object>();
-    *rptr = std::move(Reference<Object>::New(val));
+    slot->ref = std::move(Reference<Object>::New(val));
   } else if (args[2].IsNull()) {
-    rptr->Reset();
+    slot->ref.Reset();
   } else {
     throw TypeError::New(env, "WriteObject's 3rd argument needs to be an object");
   }
@@ -674,7 +699,7 @@ Object Init(Env env, Object exports) {
   SET_SIZEOF(pointer, char *);
   SET_SIZEOF(size_t, size_t);
   // size of a weak handle to a JS object
-  SET_SIZEOF(Object, Reference<Object>);
+  SET_SIZEOF(Object, ObjectSlot);
 
   // "alignof" map
   Object amap = Object::New(env);
@@ -704,7 +729,7 @@ Object Init(Env env, Object exports) {
   SET_ALIGNOF(ulonglong, unsigned long long);
   SET_ALIGNOF(pointer, char *);
   SET_ALIGNOF(size_t, size_t);
-  SET_ALIGNOF(Object, Reference<Object>);
+  SET_ALIGNOF(Object, ObjectSlot);
 
   // exports
   exports["sizeof"] = smap;
